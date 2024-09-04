@@ -20,6 +20,10 @@ jobs:
         git config --global user.name "GitHub Actions"
         git config --global user.email "actions@github.com"
 
+    - name: Pull latest changes from remote
+      run: |
+        git pull origin master --rebase
+
     - name: Replace repo and db_repo links in install.sh
       run: |
         sed -i 's|repo="https://github.com/wiedehopf/tar1090"|repo="https://git.myscripts.click/HelloWorld/tar1090"|' install.sh
