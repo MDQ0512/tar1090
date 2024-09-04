@@ -1,0 +1,37 @@
+name: Auto Replace install.sh after Upstream Update
+
+on:
+  push:
+    branches:
+      - master  # 或者其他你希望监控的分支
+
+jobs:
+  replace-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # 确保完整的 git 历史被检出
+
+    - name: Set up Git user
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+
+    - name: Replace repo and db_repo links in install.sh
+      run: |
+        sed -i 's|repo="https://github.com/wiedehopf/tar1090"|repo="https://git.myscripts.click/HelloWorld/tar1090"|' install.sh
+        sed -i 's|db_repo="https://github.com/wiedehopf/tar1090-db"|db_repo="https://git.myscripts.click/HelloWorld/tar1090-db"|' install.sh
+
+    - name: Commit changes
+      run: |
+        git add install.sh
+        git commit -m "Auto-update install.sh with custom repo links" || echo "No changes to commit"
+
+    - name: Push changes back to the repository
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: master  # 推送到你监控的分支
